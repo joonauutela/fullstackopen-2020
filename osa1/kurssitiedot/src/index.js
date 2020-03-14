@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom'
 
 const App = () => {
 
-    const course = 'Half Stack application development'
-
     // Turn course data into json-format
-    const courseInfo = [
+    const course = 'Half Stack application development'
+    const parts = [
         {
             name: 'Fundamentals of React',
             exercises: 10
@@ -20,11 +19,12 @@ const App = () => {
             exercises: 14
         }
     ]
+
     return (
         <div>
             <Header course={course} />
-            <Content courseInfo={courseInfo} />
-            <Total courseInfo={courseInfo} />
+            <Content parts={parts} />
+            <Total parts={parts} />
         </div>
     )
 }
@@ -38,10 +38,9 @@ const Header = (props) => {
 const Content = (props) => {
     return (
         <div>
-
-            <Part courseInfo={props.courseInfo[0]} />
-            <Part courseInfo={props.courseInfo[1]} />
-            <Part courseInfo={props.courseInfo[2]} />
+            <Part part={props.parts[0]} />
+            <Part part={props.parts[1]} />
+            <Part part={props.parts[2]} />
         </div>
     )
 }
@@ -49,7 +48,7 @@ const Content = (props) => {
 const Part = (props) => {
     return (
         <p>
-            {props.courseInfo.name} {props.courseInfo.exercises}
+            {props.part.name} {props.part.exercises}
         </p>
     )
 }
@@ -57,7 +56,7 @@ const Part = (props) => {
 const Total = (props) => {
     return (
         <div>
-            <p>Number of exercises {props.courseInfo[0].exercises + props.courseInfo[1].exercises + props.courseInfo[2].exercises}</p>
+            <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
         </div>
     )
 }
