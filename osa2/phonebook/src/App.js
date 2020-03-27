@@ -1,16 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import ListPerson from './components/ListPerson'
 import FormPerson from './components/FormPerson'
+import servicePersons from './services/persons'
 
 const App = () => {
 
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [persons, setPersons] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -20,16 +18,51 @@ const App = () => {
     event.preventDefault();
     const newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
     }
 
     // Check for duplicates
     if (!persons.some(person => person.name === newPerson.name)) {
-      setPersons(persons.concat(newPerson))
-    } else {
-      window.alert(`${newPerson.name} is already added to the notebook`)
+
+      createPerson(newPerson)
+
+    } else if (window.confirm(`${newPerson.name} is already added to the notebook, replace the older number with a new one?`)) {
+
+      const personToReplace = persons.filter(person => person.name === newPerson.name)
+      updatePerson(personToReplace, newPerson)
+
     }
   }
+
+  const createPerson = (newPerson) => {
+    servicePersons.createPerson(newPerson)
+      .then(() => {
+        servicePersons.getPersons()
+          .then(response => {
+            setPersons(response)
+          })
+      })
+  }
+
+  const updatePerson = (personToReplace, newPerson) => {
+
+    servicePersons.updatePerson(personToReplace[0].id, newPerson)
+      .then(() => {
+        servicePersons.getPersons()
+          .then(response => {
+            setPersons(response)
+          })
+      })
+
+  }
+
+  useEffect(() => {
+    servicePersons.getPersons()
+      .then(response => {
+        setPersons(response)
+        setIsLoading(false)
+      })
+  }, [])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -40,14 +73,20 @@ const App = () => {
   }
 
   const handleFilter = (event) => {
+    console.log(persons)
     setFilter(event.target.value)
   }
 
-  const filteredPersons = persons.filter(
-    (person) => {
-      return person.name.indexOf(filter) !== -1
+  const handleRemove = (personToRemove) => {
+    if (window.confirm(`Delete ${personToRemove.name}?`)) {
+      servicePersons.removePerson(personToRemove.id)
+        .then(() => {
+          setPersons(persons.filter(person => person !== personToRemove))
+        })
     }
-  )
+  }
+
+  if (isLoading) return null;
 
   return (
     <div>
@@ -64,7 +103,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <ListPerson filteredPersons={filteredPersons} />
+      <ListPerson persons={persons} filter={filter} handleRemove={handleRemove} />
     </div>
   )
 }
