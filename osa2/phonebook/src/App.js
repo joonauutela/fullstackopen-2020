@@ -3,11 +3,15 @@ import Filter from './components/Filter'
 import ListPerson from './components/ListPerson'
 import FormPerson from './components/FormPerson'
 import servicePersons from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
 
   const [persons, setPersons] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
+
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -40,6 +44,8 @@ const App = () => {
         servicePersons.getPersons()
           .then(response => {
             setPersons(response)
+            setMessage(`Added ${newPerson.name}`)
+            setMessageType('success')
           })
       })
   }
@@ -53,7 +59,19 @@ const App = () => {
             setPersons(response)
           })
       })
+  }
 
+  const removePerson = (personToRemove) => {
+    if (window.confirm(`Delete ${personToRemove.name}?`)) {
+      servicePersons.removePerson(personToRemove.id)
+        .then(() => {
+          setPersons(persons.filter(person => person !== personToRemove))
+        })
+        .catch(error => {
+          setMessage(`Information of ${personToRemove.name} has already been removed from server`)
+          setMessageType('error')
+        })
+    }
   }
 
   useEffect(() => {
@@ -77,20 +95,12 @@ const App = () => {
     setFilter(event.target.value)
   }
 
-  const handleRemove = (personToRemove) => {
-    if (window.confirm(`Delete ${personToRemove.name}?`)) {
-      servicePersons.removePerson(personToRemove.id)
-        .then(() => {
-          setPersons(persons.filter(person => person !== personToRemove))
-        })
-    }
-  }
-
   if (isLoading) return null;
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} messageType={messageType} />
       <Filter handleFilter={handleFilter} />
 
       <h2>add a new</h2>
@@ -103,7 +113,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <ListPerson persons={persons} filter={filter} handleRemove={handleRemove} />
+      <ListPerson persons={persons} filter={filter} handleRemove={removePerson} />
     </div>
   )
 }

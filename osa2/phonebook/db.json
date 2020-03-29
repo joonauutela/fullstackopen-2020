@@ -1,14 +1,3 @@
 {
-  "persons": [
-    {
-      "name": "Joona Uutela",
-      "number": "050-5548694",
-      "id": 1
-    },
-    {
-      "name": "Joona Uutela2",
-      "number": "040-5548694",
-      "id": 2
-    }
-  ]
+  "persons": []
 }
