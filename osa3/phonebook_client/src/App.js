@@ -41,6 +41,7 @@ const App = () => {
   const createPerson = (newPerson) => {
     servicePersons.createPerson(newPerson)
       .then(() => {
+        console.log('Test')
         servicePersons.getPersons()
           .then(response => {
             setPersons(response)
