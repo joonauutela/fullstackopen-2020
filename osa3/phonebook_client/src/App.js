@@ -41,18 +41,19 @@ const App = () => {
   const createPerson = (newPerson) => {
     servicePersons.createPerson(newPerson)
       .then(() => {
-        console.log('Test')
         servicePersons.getPersons()
           .then(response => {
             setPersons(response)
             setMessage(`Added ${newPerson.name}`)
             setMessageType('success')
           })
+      }).catch(error => {
+        setMessage(error.response.data.error)
+        setMessageType('error')
       })
   }
 
   const updatePerson = (personToReplace, newPerson) => {
-
     servicePersons.updatePerson(personToReplace[0].id, newPerson)
       .then(() => {
         servicePersons.getPersons()
@@ -96,7 +97,7 @@ const App = () => {
     setFilter(event.target.value)
   }
 
-  if (isLoading) return null;
+
 
   return (
     <div>
@@ -114,7 +115,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <ListPerson persons={persons} filter={filter} handleRemove={removePerson} />
+      {isLoading ? null : <ListPerson persons={persons} filter={filter} handleRemove={removePerson} />}
     </div>
   )
 }
