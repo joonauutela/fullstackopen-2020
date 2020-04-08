@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const api = supertest(app)
 const User = require('../models/user')
 
-
+// TODO --- Update tests
 describe('when there is initially some users saved', () => {
     beforeEach(async () => {
         await User.deleteMany({})

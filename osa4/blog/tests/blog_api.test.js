@@ -5,7 +5,7 @@ const helper = require('./test_helper')
 const api = supertest(app)
 const Blog = require('../models/blog')
 
-
+// TODO --- Update tests
 describe('when there is initially some blogs saved', () => {
     beforeEach(async () => {
         await Blog.deleteMany({})
