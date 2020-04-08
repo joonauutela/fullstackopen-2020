@@ -37,7 +37,7 @@ describe('when there is initially some blogs saved', () => {
     })
 })
 
-describe('addition of a note', () => {
+describe('addition of a blog', () => {
     test('succeeds with valid data', async () => {
         const newBlog = {
             title: "Test title",
