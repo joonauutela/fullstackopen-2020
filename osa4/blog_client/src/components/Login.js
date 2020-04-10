@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Login = ({ username, password, setUsername, setPassword, handleLogin }) => {
+const Login = ({ username, password, handleUsernameChange, handlePasswordChange, handleLogin }) => {
     return (
         <div>
             <form onSubmit={handleLogin}>
@@ -10,7 +10,7 @@ const Login = ({ username, password, setUsername, setPassword, handleLogin }) =>
                         type="text"
                         value={username}
                         name="Username"
-                        onChange={({ target }) => setUsername(target.value)}
+                        onChange={handleUsernameChange}
                     />
                 </div>
                 <div>
@@ -19,7 +19,7 @@ const Login = ({ username, password, setUsername, setPassword, handleLogin }) =>
                         type="text"
                         value={password}
                         name="Password"
-                        onChange={({ target }) => setPassword(target.value)}
+                        onChange={handlePasswordChange}
                     />
                 </div>
                 <button type="submit">login</button>

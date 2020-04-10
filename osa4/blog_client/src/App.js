@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
@@ -18,7 +19,6 @@ const App = () => {
   const [url, setUrl] = useState('')
 
   useEffect(() => {
-
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
@@ -40,6 +40,7 @@ const App = () => {
       author: author,
       url: url
     }
+    blogFormRef.current.toggleVisibility()
     blogService.create(noteObject)
       .then(setMessageType('success'))
       .then(setMessage(`a new blog ${noteObject.title} by ${noteObject.author}`))
@@ -60,7 +61,6 @@ const App = () => {
         'loggedNoteappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      console.log(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -79,39 +79,54 @@ const App = () => {
     setUser(null)
   }
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>log in to application</h2>
+  const loginForm = () => (
+    <Togglable buttonLabel='login'>
+      <h2>log in to application</h2>
+      <Notification message={message} messageType={messageType} />
+      <Login
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleLogin={handleLogin}
+      />
+    </Togglable>
+  )
+
+  const blogFormRef = React.createRef()
+
+  const blogForm = () => (
+    <div>
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
+        <h2>create new</h2>
         <Notification message={message} messageType={messageType} />
-        <Login
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          handleLogin={handleLogin}
+        <CreateBlog
+          title={title}
+          author={author}
+          url={url}
+          setTitle={setTitle}
+          setAuthor={setAuthor}
+          setUrl={setUrl}
+          handleCreateBlog={handleCreateBlog}
         />
-      </div>
-    )
-  }
+      </Togglable>
+    </div>
+  )
+
   return (
     <div>
-      <h2>create blog</h2>
-      <Notification message={message} messageType={messageType} />
-      <CreateBlog
-        title={title}
-        author={author}
-        url={url}
-        setTitle={setTitle}
-        setAuthor={setAuthor}
-        setUrl={setUrl}
-        handleCreateBlog={handleCreateBlog}
-      />
       <h2>blogs</h2>
-      <p>{user.name} logged in <button onClick={() => handleLogout()}>logout</button></p>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      {user === null ?
+        loginForm() :
+        <div>
+          {blogForm()}
+          <p>{user.name} logged in <button onClick={() => handleLogout()}>logout</button></p>
+        </div>
+      }
+      <BlogList
+        blogs={blogs}
+        user={user}
+      />
     </div>
   )
 }
