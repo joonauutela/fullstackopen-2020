@@ -25,7 +25,7 @@ const Blog = ({ blog, activeUser }) => {
       .then(setLikes(parseInt(likes) + 1))
   }
 
-  if (isRemoved) return null;
+  if (isRemoved) return null
 
   return (
     <div>
