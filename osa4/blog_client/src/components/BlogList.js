@@ -12,9 +12,11 @@ const BlogList = ({ blogs, user }) => {
 
   return (
     <div>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} activeUser={user} />
-      )}
+      <ul>
+        {blogs.map(blog =>
+          <Blog key={blog.name} blog={blog} activeUser={user} />
+        )}
+      </ul>
     </div>
   )
 }

@@ -5,52 +5,49 @@ const Blog = ({ blog, activeUser }) => {
 
   const [showFullBlog, setShowFullBlog] = useState(false)
   const [isRemoved, setIsRemoved] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   const removeBlog = async () => {
     if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}`)) {
       try {
         await blogService.remove(blog)
         setIsRemoved(true)
-      } catch (e) {
-        console.log(e)
+      } catch (exception) {
+        console.log(exception)
       }
     }
   }
 
   const likeBlog = () => {
     blogService.like(blog)
-      .then(setIsLiked(true))
-      .then(setLikes(parseInt(likes) + 1))
+  }
+
+  const removeButton = () => {
+    return activeUser.username === blog.user.username ? (
+      <button onClick={() => removeBlog()}>remove</button>
+    ) : null
   }
 
   if (isRemoved) return null
 
   return (
-    <div>
-      <div>
+    <li className='blog'>
+      <div className="primaryInfo">
         {blog.title} {blog.author}
-        <button onClick={() => setShowFullBlog(!showFullBlog)}>view</button>
+        <button className='btnShowAll' onClick={() => setShowFullBlog(!showFullBlog)}>view</button>
       </div>
       {showFullBlog &&
-        <div>
-          <a href={blog.url}>{blog.url}</a>
+        <div className='moreInfo'>
+          <a href={blog.url} className='blogurl'>{blog.url}</a>
           <br />
-          {likes}
-          {!isLiked &&
-            <button onClick={() => likeBlog()}>like</button>
-          }
+          {blog.likes}
+          <button className='btnLike' onClick={() => likeBlog()}>like</button>
           <br />
           {blog.user.name}
           <br />
-          {activeUser !== null && activeUser.username === blog.user.username &&
-            <button onClick={() => removeBlog()}>remove</button>
-          }
+          {removeButton()}
         </div>
       }
-
-    </div>
+    </li>
   )
 }
 
