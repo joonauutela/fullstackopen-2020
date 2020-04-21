@@ -8,14 +8,14 @@ const CreateBlog = ({ blogService, setNotificationState }) => {
 
   const handleCreateBlog = (event) => {
     event.preventDefault()
-    const noteObject = {
+    const blogObject = {
       title: title,
       author: author,
       url: url
     }
 
-    blogService.create(noteObject)
-      .then(setNotificationState({ message: `a new blog ${noteObject.title} by ${noteObject.author}`, type: 'success' }))
+    blogService.create(blogObject)
+      .then(setNotificationState({ message: `a new blog ${blogObject.title} by ${blogObject.author}`, type: 'success' }))
       .then(setTimeout(() => {
         setNotificationState({ message: null, type: null })
       }, 5000))

@@ -46,6 +46,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      console.log(`${user.username} user!`)
     } catch (exception) {
       setNotificationState({ message: 'wrong username or password', type: 'error' })
       setTimeout(() => {

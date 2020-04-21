@@ -25,9 +25,12 @@ const Blog = ({ blog, activeUser, handleLikeBlog }) => {
   }
 
   const removeButton = () => {
-    return activeUser.username === blog.user.username ? (
-      <button onClick={() => removeBlog()}>remove</button>
-    ) : null
+
+    if (activeUser) {
+      return activeUser.username === blog.user.username ? (
+        <button id='remove-button' onClick={() => removeBlog()}>remove</button>
+      ) : null
+    }
   }
 
   Blog.propTypes = {
@@ -40,7 +43,7 @@ const Blog = ({ blog, activeUser, handleLikeBlog }) => {
   if (isRemoved) return null
 
   return (
-    <li className='blog'>
+    <li id={blog.title} className='blog'>
       <div className="primaryInfo">
         {blog.title} {blog.author}
         <button id='view-button' className='btnShowAll' onClick={() => setShowFullBlog(!showFullBlog)}>view</button>
@@ -50,7 +53,7 @@ const Blog = ({ blog, activeUser, handleLikeBlog }) => {
           <a href={blog.url} className='blogurl'>{blog.url}</a>
           <br />
           {likes}
-          <button className='btnLike' onClick={() => likeBlog()}>like</button>
+          <button id='like-button' className='btnLike' onClick={() => likeBlog()}>like</button>
           <br />
           {blog.user.name}
           <br />
