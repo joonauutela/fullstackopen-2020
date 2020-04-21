@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
+import { prettyDOM } from '@testing-library/dom'
 import Blog from './Blog'
 
 const testBlog = {
@@ -14,10 +15,13 @@ const testBlog = {
   }
 }
 describe('Blog', () => {
+
   let component
+  const mockHandler = jest.fn()
+
   beforeEach(() => {
     component = render(
-      <Blog blog={testBlog} activeUser={testBlog.user.username} />
+      <Blog blog={testBlog} activeUser={testBlog.user.username} handleLikeBlog={mockHandler} />
     )
   })
 
@@ -40,5 +44,16 @@ describe('Blog', () => {
     expect(moreInfo).toHaveTextContent('www.testurl1.com')
     expect(moreInfo).toHaveTextContent('2')
     expect(moreInfo).toHaveTextContent('testname')
+  })
+
+  test('like-button event handler is called once every click', () => {
+
+    const buttonViewMore = component.getByText('view')
+    fireEvent.click(buttonViewMore)
+    const buttonlike = component.container.querySelector('.btnLike')
+    console.log(prettyDOM(buttonlike))
+    fireEvent.click(buttonlike)
+    fireEvent.click(buttonlike)
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })

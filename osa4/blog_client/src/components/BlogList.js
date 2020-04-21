@@ -1,7 +1,7 @@
 import React from 'react'
 import Blog from './Blog'
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = ({ blogs, user, handleLikeBlog }) => {
 
   // Sort bloglist by likes
   if (blogs.length > 0) {
@@ -14,7 +14,7 @@ const BlogList = ({ blogs, user }) => {
     <div>
       <ul>
         {blogs.map(blog =>
-          <Blog key={blog.name} blog={blog} activeUser={user} />
+          <Blog key={blog.name} blog={blog} activeUser={user} handleLikeBlog={handleLikeBlog} />
         )}
       </ul>
     </div>

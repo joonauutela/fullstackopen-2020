@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from 'axios'
 const baseUrl = process.env.REACT_APP_BLOG_URI
 const url = `${baseUrl}api/blogs/`
@@ -30,11 +31,12 @@ const remove = async blogToRemove => {
   return request.data
 }
 
-const like = async blogToLike => {
-  const newBlog = { ...blogToLike }
-  newBlog.likes++;
-  const request = await axios.put(`${url}${blogToLike.id}`, newBlog)
-  return request.data
+const update = async (blog, newBlog) => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const response = await axios.put(`${url}/${blog.id}`, newBlog, config)
+  return response.data
 }
 
-export default { getAll, setToken, create, remove, like }
+export default { getAll, setToken, create, remove, update }

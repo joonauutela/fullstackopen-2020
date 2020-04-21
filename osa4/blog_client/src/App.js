@@ -11,12 +11,11 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [messageType, setMessageType] = useState(null)
-  const [message, setMessage] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [notificationState, setNotificationState] = useState({
+    message: null,
+    type: null
+  })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,23 +32,6 @@ const App = () => {
     }
   }, [])
 
-  const handleCreateBlog = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      title: title,
-      author: author,
-      url: url
-    }
-    blogFormRef.current.toggleVisibility()
-    blogService.create(noteObject)
-      .then(setMessageType('success'))
-      .then(setMessage(`a new blog ${noteObject.title} by ${noteObject.author}`))
-      .then(setTimeout(() => {
-        setMessageType(null)
-        setMessage('')
-      }, 5000))
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -65,11 +47,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage('wrong username or password')
-      setMessageType('error')
+      setNotificationState({ message: 'wrong username or password', type: 'error' })
       setTimeout(() => {
-        setMessageType(null)
-        setMessage('')
+        setNotificationState({ message: null, type: null })
       }, 5000)
     }
   }
@@ -79,18 +59,25 @@ const App = () => {
     setUser(null)
   }
 
+  const handleLikeBlog = (blog) => {
+    const likedBlog = blog
+    likedBlog.likes++
+    blogService.update(blog, likedBlog)
+  }
+
   const loginForm = () => (
-    <Togglable buttonLabel='login'>
-      <h2>log in to application</h2>
-      <Notification message={message} messageType={messageType} />
-      <Login
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleLogin={handleLogin}
-      />
-    </Togglable>
+    <div>
+      <Togglable buttonLabel='login'>
+        <h2>log in to application</h2>
+        <Login
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleLogin={handleLogin}
+        />
+      </Togglable>
+    </div>
   )
 
   const blogFormRef = React.createRef()
@@ -99,15 +86,9 @@ const App = () => {
     <div>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <h2>create new</h2>
-        <Notification message={message} messageType={messageType} />
         <CreateBlog
-          title={title}
-          author={author}
-          url={url}
-          setTitle={setTitle}
-          setAuthor={setAuthor}
-          setUrl={setUrl}
-          handleCreateBlog={handleCreateBlog}
+          blogService={blogService}
+          setNotificationState={setNotificationState}
         />
       </Togglable>
     </div>
@@ -115,6 +96,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notificationState.message} messageType={notificationState.type} />
       <h2>blogs</h2>
       {user === null ?
         loginForm() :
@@ -126,6 +108,7 @@ const App = () => {
       <BlogList
         blogs={blogs}
         user={user}
+        handleLikeBlog={handleLikeBlog}
       />
     </div>
   )
