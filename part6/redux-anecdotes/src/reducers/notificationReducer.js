@@ -1,8 +1,8 @@
+var timeOuts = []
+
 const notificationReducer = (state = { message: '', timeout: 0 }, action) => {
     switch (action.type) {
         case 'SET_NOTIFICATION':
-            return action.data
-        case 'CLEAR_NOTIFICATION':
             return action.data
         default:
             return state
@@ -10,6 +10,10 @@ const notificationReducer = (state = { message: '', timeout: 0 }, action) => {
 }
 
 export const changeNotification = (message, timeout) => {
+
+    if (timeOuts.length > 0) {
+        clearTimeout(timeOuts[timeOuts.length - 1])
+    }
     return async dispatch => {
         dispatch({
             type: 'SET_NOTIFICATION',
@@ -18,20 +22,15 @@ export const changeNotification = (message, timeout) => {
                 timeout
             }
         })
-        setTimeout(() => {
-            dispatch(clearNotification())
-        }, timeout * 1000)
+        timeOuts.push(setTimeout(() => {
+            dispatch({
+                type: 'SET_NOTIFICATION',
+                data: {
+                    message: '',
+                    timeout: 0
+                }
+            })
+        }, timeout * 1000))
     }
 }
-
-export const clearNotification = () => {
-    return {
-        type: 'CLEAR_NOTIFICATION',
-        data: {
-            message: '',
-            timeout: 0
-        }
-    }
-}
-
 export default notificationReducer
