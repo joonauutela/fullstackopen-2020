@@ -1,20 +1,23 @@
 /* eslint-disable indent */
 import React from 'react'
+import { useSelector } from 'react-redux'
 import '../App.css'
 
-const Notification = ({ message, messageType }) => {
+const Notification = () => {
 
-  switch (messageType) {
+  const notification = useSelector(state => state.notification)
+
+  switch (notification.messageType) {
     case 'error':
       return (
         <div className="error">
-          {message}
+          {notification.message}
         </div>
       )
     case 'success':
       return (
         <div className="success">
-          {message}
+          {notification.message}
         </div>
       )
     default:
