@@ -6,9 +6,10 @@ import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import loginService from './services/login'
 import blogService from './services/blogs'
+import { useDispatch } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -17,11 +18,11 @@ const App = () => {
     type: null
   })
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -58,12 +59,6 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
-  }
-
-  const handleLikeBlog = (blog) => {
-    const likedBlog = blog
-    likedBlog.likes++
-    blogService.update(blog, likedBlog)
   }
 
   const loginForm = () => (
@@ -107,9 +102,7 @@ const App = () => {
         </div>
       }
       <BlogList
-        blogs={blogs}
         user={user}
-        handleLikeBlog={handleLikeBlog}
       />
     </div>
   )

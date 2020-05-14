@@ -1,34 +1,18 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
-const Blog = ({ blog, activeUser, handleLikeBlog }) => {
+const Blog = ({ blog, activeUser }) => {
 
   const [showFullBlog, setShowFullBlog] = useState(false)
-  const [isRemoved, setIsRemoved] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
-  const removeBlog = async () => {
-    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}`)) {
-      try {
-        await blogService.remove(blog)
-        setIsRemoved(true)
-      } catch (exception) {
-        console.log(exception)
-      }
-    }
-  }
-
-  const likeBlog = async () => {
-    await handleLikeBlog(blog)
-    setLikes(parseInt(likes) + 1)
-  }
+  const dispatch = useDispatch()
 
   const removeButton = () => {
-
     if (activeUser) {
       return activeUser.username === blog.user.username ? (
-        <button id='remove-button' onClick={() => removeBlog()}>remove</button>
+        <button id='remove-button' onClick={() => dispatch(removeBlog(blog))}>remove</button>
       ) : null
     }
   }
@@ -39,11 +23,8 @@ const Blog = ({ blog, activeUser, handleLikeBlog }) => {
     handleLikeBlog: PropTypes.func
   }
 
-
-  if (isRemoved) return null
-
   return (
-    <li id={blog.title} className='blog'>
+    <li key={blog.id} id={blog.title} className='blog'>
       <div className="primaryInfo">
         {blog.title} {blog.author}
         <button id='view-button' className='btnShowAll' onClick={() => setShowFullBlog(!showFullBlog)}>view</button>
@@ -52,8 +33,8 @@ const Blog = ({ blog, activeUser, handleLikeBlog }) => {
         <div className='moreInfo'>
           <a href={blog.url} className='blogurl'>{blog.url}</a>
           <br />
-          {likes}
-          <button id='like-button' className='btnLike' onClick={() => likeBlog()}>like</button>
+          {blog.likes}
+          <button id='like-button' className='btnLike' onClick={() => dispatch(likeBlog(blog))}>like</button>
           <br />
           {blog.user.name}
           <br />
