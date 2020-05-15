@@ -1,15 +1,18 @@
 /* eslint-disable linebreak-style */
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/loginReducer'
 
-const Login = ({ username, password, handleUsernameChange, handlePasswordChange, handleLogin }) => {
+const Login = () => {
 
-  Login.propTypes = {
-    handleLogin: PropTypes.func.isRequired,
-    handleUsernameChange: PropTypes.func.isRequired,
-    handlePasswordChange: PropTypes.func.isRequired,
-    username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const dispatch = useDispatch()
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+    dispatch(login(username, password))
   }
 
   return (
@@ -20,7 +23,7 @@ const Login = ({ username, password, handleUsernameChange, handlePasswordChange,
           <input
             id='username'
             value={username}
-            onChange={handleUsernameChange}
+            onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
@@ -30,7 +33,7 @@ const Login = ({ username, password, handleUsernameChange, handlePasswordChange,
             type='password'
             value={password}
             name="Password"
-            onChange={handlePasswordChange}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
         <button id='login-button' type="submit">login</button>

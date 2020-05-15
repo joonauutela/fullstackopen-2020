@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
-import loginService from './services/login'
 import blogService from './services/blogs'
 import { useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { continueSession, logout } from './reducers/loginReducer'
+import { useSelector } from 'react-redux'
 
 const App = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [notificationState, setNotificationState] = useState({
-    message: null,
-    type: null
-  })
 
   const dispatch = useDispatch()
+
+  const user = useSelector(state => state.login)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -27,51 +23,20 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(continueSession(loggedUserJSON))
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username, password
-      })
-
-      window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      console.log(`${user.username} user!`)
-    } catch (exception) {
-      setNotificationState({ message: 'wrong username or password', type: 'error' })
-      setTimeout(() => {
-        setNotificationState({ message: null, type: null })
-      }, 5000)
-    }
-  }
 
   const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
+    dispatch(logout())
   }
 
   const loginForm = () => (
     <div>
       <Togglable buttonLabel='login'>
         <h2>log in to application</h2>
-        <Login
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleLogin={handleLogin}
-        />
+        <Login />
       </Togglable>
     </div>
   )
@@ -84,15 +49,13 @@ const App = () => {
         <h2>create new</h2>
         <CreateBlog
           blogService={blogService}
-          setNotificationState={setNotificationState}
         />
       </Togglable>
     </div>
   )
-
   return (
     <div>
-      <Notification message={notificationState.message} messageType={notificationState.type} />
+      <Notification />
       <h2>blogs</h2>
       {user === null ?
         loginForm() :

@@ -8,7 +8,6 @@ const notificationReducer = (state = initialState, action) => {
 
   switch (action.type) {
     case 'SET_NOTIFICATION':
-      console.log(action.data)
       return action.data
     default:
       return state
@@ -18,7 +17,6 @@ const notificationReducer = (state = initialState, action) => {
 export const changeNotification = (message, messageType, timeout) => {
 
   return async dispatch => {
-    console.log('moimoimoi!')
     dispatch({
       type: 'SET_NOTIFICATION',
       data: {
