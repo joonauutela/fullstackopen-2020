@@ -15,12 +15,12 @@ const BlogList = ({ user, handleLikeBlog }) => {
 
   return (
     <div>
-      <ul id='blogs'>
+      <div id='blogs' style={{ paddingTop: 10 }}>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} activeUser={user} handleLikeBlog={handleLikeBlog} />
         )}
-      </ul>
-    </div>
+      </div>
+    </div >
   )
 }
 

@@ -5,7 +5,6 @@ const userReducer = (state = [], action) => {
 
   switch (action.type) {
     case 'GET_USERS':
-      console.log(action.data)
       return action.data
     default:
       return state
@@ -18,9 +17,7 @@ export const getUsers = () => {
     const users = await usersService.getAll()
     dispatch({
       type: 'GET_USERS',
-      data: {
-        users
-      }
+      data: users
     })
   }
 }

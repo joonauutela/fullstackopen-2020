@@ -1,23 +1,32 @@
 import React, { useEffect } from 'react'
-import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
 import Login from './components/Login'
-import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
-import blogService from './services/blogs'
 import { useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { continueSession, logout } from './reducers/loginReducer'
+import { getUsers } from './reducers/userReducer'
 import { useSelector } from 'react-redux'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+
+import AllBlogsView from './views/Blogs'
+import AllUsersView from './views/Users'
+import UserView from './views/User'
+import BlogView from './views/Blog'
 
 const App = () => {
 
-  const dispatch = useDispatch()
+  const padding = {
+    padding: 5
+  }
 
-  const user = useSelector(state => state.login)
+  const dispatch = useDispatch()
+  const loggedUser = useSelector(state => state.login)
+  const users = useSelector(state => state.users)
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(getUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -26,11 +35,6 @@ const App = () => {
       dispatch(continueSession(loggedUserJSON))
     }
   }, [])
-
-
-  const handleLogout = () => {
-    dispatch(logout())
-  }
 
   const loginForm = () => (
     <div>
@@ -41,33 +45,39 @@ const App = () => {
     </div>
   )
 
-  const blogFormRef = React.createRef()
-
-  const blogForm = () => (
-    <div>
-      <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <h2>create new</h2>
-        <CreateBlog
-          blogService={blogService}
-        />
-      </Togglable>
-    </div>
+  const logoutButton = () => (
+    <p>{loggedUser.name} logged in <button onClick={() => dispatch(logout())}>logout</button></p>
   )
+
   return (
-    <div>
-      <Notification />
-      <h2>blogs</h2>
-      {user === null ?
-        loginForm() :
+    <Router>
+      <div>
         <div>
-          {blogForm()}
-          <p>{user.name} logged in <button onClick={() => handleLogout()}>logout</button></p>
+          <Link style={padding} to="/">home</Link>
+          <Link style={padding} to="/users">users</Link>
         </div>
-      }
-      <BlogList
-        user={user}
-      />
-    </div>
+        <Notification />
+        <h2>blogs</h2>
+        {loggedUser === null ?
+          loginForm() : logoutButton()
+        }
+      </div>
+      <Switch>
+        <Route path="/users/:id">
+          <UserView users={users} />
+        </Route>
+        <Route path="/blogs/:id">
+          <BlogView />
+        </Route>
+        <Route path="/users">
+          <AllUsersView users={users} />
+        </Route>
+        <Route path="/">
+          <AllBlogsView user={loggedUser} />
+        </Route>
+      </Switch>
+
+    </Router>
   )
 }
 

@@ -2,8 +2,15 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, activeUser }) => {
+
+  const padding = {
+    background: "#d5dbdb",
+    width: "50%",
+    marginTop: 10
+  }
 
   const [showFullBlog, setShowFullBlog] = useState(false)
 
@@ -24,9 +31,9 @@ const Blog = ({ blog, activeUser }) => {
   }
 
   return (
-    <li key={blog.id} id={blog.title} className='blog'>
+    <div key={blog.id} id={blog.title} className='blog' style={padding}>
       <div className="primaryInfo">
-        {blog.title} {blog.author}
+        <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
         <button id='view-button' className='btnShowAll' onClick={() => setShowFullBlog(!showFullBlog)}>view</button>
       </div>
       {showFullBlog &&
@@ -41,7 +48,7 @@ const Blog = ({ blog, activeUser }) => {
           {removeButton()}
         </div>
       }
-    </li>
+    </div>
   )
 }
 
