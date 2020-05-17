@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom'
 const Blog = ({ blog, activeUser }) => {
 
   const padding = {
-    background: "#d5dbdb",
-    width: "50%",
+    background: '#d5dbdb',
+    width: '50%',
     marginTop: 10
   }
 

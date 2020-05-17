@@ -9,9 +9,9 @@ const blogReducer = (state = [], action) => {
     case 'NEW_BLOG':
       return [...state, action.data]
     case 'EDIT_BLOG':
-      const likedBlog = action.data
+      const editedBlog = action.data
       return state.map(blog =>
-        blog.id !== action.data.id ? blog : likedBlog
+        blog.id !== action.data.id ? blog : editedBlog
       )
     case 'REMOVE_BLOG':
       return state.filter((blog) => blog.id !== action.data.id)
@@ -66,6 +66,23 @@ export const removeBlog = (blog) => {
         data: blog
       })
     }
+  }
+}
+
+export const addComment = (blog, content) => {
+  return async dispatch => {
+    const savedComment = await blogService.addComment(blog.id, content)
+    const comment = {
+      content,
+      id: savedComment.id
+    }
+    const newComments = blog.comments.concat(comment)
+    const newBlog = blog
+    newBlog.comments = newComments
+    dispatch({
+      type: 'EDIT_BLOG',
+      data: newBlog
+    })
   }
 }
 
