@@ -1,6 +1,6 @@
 import patientsData from '../../data/patients';
 
-import { PatientsEntry, PatientsPublicEntry } from '../types';
+import { PatientsEntry, PatientsPublicEntry, NewPatientEntry } from '../types';
 
 const patients: Array<PatientsEntry> = patientsData;
 
@@ -18,8 +18,15 @@ const getPublicEntries = (): PatientsPublicEntry[] => {
     }));
 };
 
-const addEntry = () => {
-    return null;
+const addEntry = (entry: NewPatientEntry): PatientsEntry => {
+    // TODO: make a proper id-generator
+    const id: string = (Math.random() * 1000).toString();
+    const newPatientEntry = {
+        id,
+        ...entry
+    };
+    patients.push(newPatientEntry);
+    return newPatientEntry;
 };
 
 export default {
