@@ -1,14 +1,18 @@
 import patientsData from '../../data/patients';
 
-import { PatientsEntry, PatientsPublicEntry, NewPatientEntry } from '../types';
+import { Patient, PublicPatient, NewPatientEntry } from '../types';
 
-const patients: Array<PatientsEntry> = patientsData;
+const patients: Array<Patient> = patientsData;
 
-const getEntries = (): PatientsEntry[] => {
+const getEntries = (): Patient[] => {
     return patients;
 };
 
-const getPublicEntries = (): PatientsPublicEntry[] => {
+const getEntry = (id: string) => {
+    return patients.find(patient => patient.id === id);
+};
+
+const getPublicEntries = (): PublicPatient[] => {
     return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
         id,
         name,
@@ -18,19 +22,22 @@ const getPublicEntries = (): PatientsPublicEntry[] => {
     }));
 };
 
-const addEntry = (entry: NewPatientEntry): PatientsEntry => {
+const addEntry = (entry: NewPatientEntry): Patient => {
     // TODO: make a proper id-generator
     const id: string = (Math.random() * 1000).toString();
     const newPatientEntry = {
         id,
-        ...entry
+        ...entry,
+        entries: []
     };
     patients.push(newPatientEntry);
+    console.log(patients);
     return newPatientEntry;
 };
 
 export default {
     getEntries,
     addEntry,
-    getPublicEntries
+    getPublicEntries,
+    getEntry
 };
