@@ -12,6 +12,7 @@
   "dependencies": {
     "apollo-server": "^2.14.3",
     "graphql": "^15.1.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "uuid": "^3.4.0"
   }
 }

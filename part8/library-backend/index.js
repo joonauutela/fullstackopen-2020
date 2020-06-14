@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const uuid = require('uuid/v1')
 
 let authors = [
     {
@@ -83,6 +84,7 @@ const typeDefs = gql`
     name: String!
     id: ID!
     born: Int
+    bookCount: Int!
   }
 
   type Book {
@@ -96,7 +98,22 @@ const typeDefs = gql`
   type Query {
       authorCount: Int!
       bookCount: Int!
-      allBooks: [Book!]!
+      allBooks(author: String, genre: String): [Book!]!
+      allAuthors: [Author!]!
+  }
+  
+  type Mutation {
+      addBook(
+        title: String!
+        published: Int!
+        author: String!
+        genres: [String!]!
+      ): Book
+
+      editAuthor(
+        name: String!
+        setBornTo: Int!
+      ): Author
   }
 `
 
@@ -104,7 +121,56 @@ const resolvers = {
     Query: {
         authorCount: () => authors.length,
         bookCount: () => books.length,
-        allBooks: () => books
+        allBooks: (root, args) => {
+            if (args.length === undefined) return books
+
+            const filteredBooks = books.filter(book => {
+                if (book.author === args.author || book.genres.includes(args.genre)) return book
+            });
+            return filteredBooks
+        },
+        allAuthors: () => {
+            authors.forEach(author => {
+                let bookCount = 0
+                books.map(book => {
+                    if (author.name === book.author) bookCount++
+                })
+                author.bookCount = bookCount
+            })
+            return authors
+        }
+    },
+    Mutation: {
+        addBook: (root, args) => {
+            const book = { ...args, id: uuid() }
+            let isAuthorInDb = false;
+
+            // Check if author doesnt exist in db
+            authors.filter(author => {
+                if (author.name === book.author) {
+                    isAuthorInDb = true;
+                }
+            })
+            // Create new author to db if none exist
+            if (!isAuthorInDb) {
+                const author = { name: book.author, id: uuid() }
+                authors = authors.concat(author)
+            }
+            books = books.concat(book)
+            return book
+        },
+        editAuthor: (root, args) => {
+            const author = authors.find(a => {
+                return a.name === args.name
+            })
+            if (!author) {
+                return null
+            }
+
+            const updatedAuthor = { ...author, born: args.setBornTo }
+            authors = authors.map(a => a.name === args.name ? updatedAuthor : a);
+            return updatedAuthor;
+        }
     }
 }
 
