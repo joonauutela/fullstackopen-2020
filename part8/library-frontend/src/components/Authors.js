@@ -41,6 +41,10 @@ const Authors = (props) => {
     setName('')
   }
 
+  const handleChange = (event) => {
+    setName(event.target.value)
+  }
+
   return (
     <div>
       <h2>authors</h2>
@@ -69,10 +73,9 @@ const Authors = (props) => {
       <form onSubmit={submit}>
         <div>
           name
-      <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select value={name} onChange={handleChange}>
+            {result.data.allAuthors.map(author => <option key={author.name} value={author.name}>{author.name}</option>)}
+          </select>
         </div>
         <div>
           born
