@@ -81,36 +81,34 @@ const resolvers = {
         }
     },
     Mutation: {
-        addBook: (root, args) => {
-            Author.findOne({ name: args.author })
-                .then(result => {
-                    // No author in db
-                    if (result === null) {
-                        const author = new Author({ name: args.author })
-                        const book = new Book({ ...args, author: author })
-                        author.save()
-                        book.save()
-                        return book
-                    }
-                    // Author in db
-                    else {
-                        const book = new Book({ ...args, author: result })
-                        book.save()
-                        return book
-                    }
-                })
-        },
-        editAuthor: (root, args) => {
-            const author = authors.find(a => {
-                return a.name === args.name
-            })
-            if (!author) {
-                return null
+        addBook: async (root, args) => {
+            const result = await Author.findOne({ name: args.author })
+
+            if (result === null) {
+                const author = new Author({ name: args.author })
+                const book = new Book({ ...args, author: author })
+                try {
+                    await author.save()
+                    await book.save()
+                } catch (error) {
+                    throw new UserInputError(error.message, {
+                        invalidArgs: args,
+                    })
+                }
+                return book;
+            }
+            // Author in db
+            else {
+                const book = new Book({ ...args, author: result })
+                return book.save()
             }
 
-            const updatedAuthor = { ...author, born: args.setBornTo }
-            authors = authors.map(a => a.name === args.name ? updatedAuthor : a);
-            return updatedAuthor;
+        },
+
+        editAuthor: async (root, args) => {
+            const author = await Author.findOne({ name: args.name })
+            author.born = args.born
+            return author.save()
         }
     }
 }
