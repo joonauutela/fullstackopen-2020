@@ -1,5 +1,5 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const ALL_AUTHORS = gql`
 query {
@@ -29,19 +29,27 @@ const Authors = (props) => {
   const [editAuthor] = useMutation(EDIT_AUTHOR)
   const result = useQuery(ALL_AUTHORS);
 
+  useEffect(() => {
+    if (result.data) {
+      setName(result.data.allAuthors[0].name)
+    }
+    console.log(name)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result.data])
+
   if (!props.show || result.loading) {
     return null
   }
 
   const submit = async (event) => {
     event.preventDefault()
-    console.log(name + " " + born)
     editAuthor({ variables: { name, born } })
     setBorn('')
     setName('')
   }
 
   const handleChange = (event) => {
+    console.log(event.target.value)
     setName(event.target.value)
   }
 
