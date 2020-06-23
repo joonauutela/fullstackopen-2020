@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../queries'
+import { GET_BOOKS } from '../queries'
 
 const Books = (props) => {
 
-  const result = useQuery(ALL_BOOKS)
+  const result = useQuery(GET_BOOKS)
   const [allBooks, setAllBooks] = useState([])
   const [filteredBooks, setFilteredBooks] = useState([])
 
-  const genres = ['refactoring', 'agile', 'patterns', 'design', 'crime']
+  const genres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'scifi']
 
   useEffect(() => {
     if (result.data) {

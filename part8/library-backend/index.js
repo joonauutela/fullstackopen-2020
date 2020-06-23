@@ -4,6 +4,7 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
+const book = require('./models/book')
 require("dotenv").config()
 
 const MONGODB_URI = `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0-6n5us.mongodb.net/Cluster0?retryWrites=true&w=majority`
@@ -49,7 +50,7 @@ const typeDefs = gql`
   type Query {
       authorCount: Int!
       bookCount: Int!
-      allBooks(author: String, genre: String): [Book!]!
+      allBooks(genre: String): [Book!]!
       allAuthors: [Author!]!
       me: User
   }
@@ -81,14 +82,13 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        authorCount: async () => {
-            await Author.remove({})
-            await Book.remove({})
-            return 1
-        },
+        authorCount: () => Author.collection.countDocuments(),
         bookCount: () => Book.collection.countDocuments(),
         allBooks: (root, args) => {
-            return Book.find({}).populate('author')
+            if (args.genre === undefined) {
+                return Book.find({}).populate('author')
+            }
+            return Book.find({ genres: { $in: [args.genre] } }).populate('author')
         },
         allAuthors: async () => {
             const authors = await Author.find({})

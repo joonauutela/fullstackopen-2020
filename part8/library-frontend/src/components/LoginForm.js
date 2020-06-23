@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
-import { LOGIN } from '../queries'
+import { LOGIN, GET_USER } from '../queries'
 
 const LoginForm = ({ setToken, show }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const [login, result] = useMutation(LOGIN)
+    const [login, result] = useMutation(LOGIN, {
+        refetchQueries: [{ query: GET_USER }]
+    })
 
     useEffect(() => {
         if (result.data) {
@@ -22,7 +24,6 @@ const LoginForm = ({ setToken, show }) => {
 
     const submit = async (event) => {
         event.preventDefault()
-
         login({ variables: { username, password } })
     }
 

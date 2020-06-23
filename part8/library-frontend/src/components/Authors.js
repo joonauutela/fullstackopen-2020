@@ -13,8 +13,6 @@ const Authors = (props) => {
     if (result.data) {
       setName(result.data.allAuthors[0].name)
     }
-    console.log(name)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data])
 
   if (!props.show || result.loading) {
