@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useQuery, useMutation, useSubscription, useApolloClient } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import Recommend from './components/Recommend'
+import { BOOK_ADDED } from './queries'
 
 
 const App = () => {
@@ -24,6 +25,13 @@ const App = () => {
       setToken(localStorageToken)
     }
   }, [])
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBookTitle = subscriptionData.data.bookAdded.title
+      window.alert(`new book: '${addedBookTitle}' added`)
+    }
+  })
 
   return (
     <div>

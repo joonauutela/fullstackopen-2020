@@ -21,7 +21,8 @@ const Recommend = (props) => {
 
     useEffect(() => {
         if (data) {
-            setBooksByGenre(data.allBooks)
+            console.log(data)
+            setBooksByGenre(data.books)
         }
     }, [data])
 
