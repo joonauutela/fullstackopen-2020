@@ -15,6 +15,8 @@ module.exports = {
     'rules': {
         'eqeqeq': 'error',
         'no-trailing-spaces': 'error',
+        "no-unused-vars": "off",
+        'no-undef': 'off',
         'object-curly-spacing': [
             'error', 'always'
         ],

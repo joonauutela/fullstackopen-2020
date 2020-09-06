@@ -1,8 +1,7 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 require("dotenv").config()
 const express = require('express')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 const cors = require('cors')
 const Person = require('./models/person')
 const bodyParser = require('body-parser')
@@ -14,6 +13,17 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 app.use(bodyParser.json())
+
+const url =
+    `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0.6n5us.mongodb.net/Cluster0>?retryWrites=true&w=majority`
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log('connected to MongoDB')
+    })
+    .catch((error) => {
+        console.log('error connection to MongoDB:', error.message)
+    })
 
 // Create new token 'post-data'
 morgan.token('post-data', function (req) {
@@ -85,7 +95,6 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number
     }
 
-    // "{new: true}" makes it possible to return the new object as a response
     Person.findByIdAndUpdate(request.params.id, person, { new: true })
         .then(updatedPerson => {
             response.json(updatedPerson.toJSON())
